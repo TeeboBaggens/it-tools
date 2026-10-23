@@ -1,5 +1,8 @@
 import { describe, expect, it } from 'vitest';
 import {
+  applyUmask,
+  computeIcaclsGrants,
+  isValidUmask,
   computeChmodOctalRepresentation,
   computeChmodSymbolicRepresentation,
   computePermissionsFromChmodOctalRepresentation,
@@ -198,7 +201,7 @@ describe('chmod-calculator', () => {
             flags: { setuid: false, setgid: false, stickybit: true },
           },
         }),
-      ).to.eql('--x-w-r-t');
+      ).to.eql('--x-w-r-T');
 
       expect(
         computeChmodSymbolicRepresentation({
@@ -209,7 +212,7 @@ describe('chmod-calculator', () => {
             flags: { setuid: false, setgid: true, stickybit: true },
           },
         }),
-      ).to.eql('--x-wsr-t');
+      ).to.eql('--x-wSr-T');
 
       expect(
         computeChmodSymbolicRepresentation({
@@ -220,7 +223,7 @@ describe('chmod-calculator', () => {
             flags: { setuid: true, setgid: true, stickybit: true },
           },
         }),
-      ).to.eql('--s-wsr-t');
+      ).to.eql('--s-wSr-T');
 
       expect(
         computeChmodSymbolicRepresentation({
@@ -515,6 +518,60 @@ describe('chmod-calculator', () => {
       ).to.deep.eq({
         octal: '653',
         symbolic: 'umask u=x,g=w,o=r',
+      });
+    });
+  });
+
+  describe('symbolic special bits without execute', () => {
+    it('parses uppercase S and T as the flag without execute', () => {
+      expect(computePermissionsFromChmodSymbolicRepresentation('rwSr-Sr-T')).to.eql({
+        owner: { read: true, write: true, execute: false },
+        group: { read: true, write: false, execute: false },
+        public: { read: true, write: false, execute: false },
+        flags: { setuid: true, setgid: true, stickybit: true },
+      });
+    });
+    it('round-trips through octal', () => {
+      expect(
+        computeChmodOctalRepresentation({
+          permissions: computePermissionsFromChmodSymbolicRepresentation('drwxrwxrwt'),
+        }),
+      ).to.eql('1777');
+      expect(
+        computeChmodSymbolicRepresentation({ permissions: computePermissionsFromChmodOctalRepresentation('4644') }),
+      ).to.eql('rwSr--r--');
+      expect(
+        computeChmodSymbolicRepresentation({ permissions: computePermissionsFromChmodOctalRepresentation('2775') }),
+      ).to.eql('rwxrwsr-x');
+    });
+  });
+
+  describe('umask', () => {
+    it('validates 3 or 4 octal digits', () => {
+      expect(isValidUmask('022')).to.eql(true);
+      expect(isValidUmask('0027')).to.eql(true);
+      expect(isValidUmask('22')).to.eql(false);
+      expect(isValidUmask('089')).to.eql(false);
+    });
+    it('computes default file and directory modes', () => {
+      expect(applyUmask('022')).to.eql({ file: '644', directory: '755' });
+      expect(applyUmask('0027')).to.eql({ file: '640', directory: '750' });
+      expect(applyUmask('077')).to.eql({ file: '600', directory: '700' });
+      expect(applyUmask('002')).to.eql({ file: '664', directory: '775' });
+    });
+  });
+
+  describe('computeIcaclsGrants', () => {
+    it('maps each class to the nearest icacls rights', () => {
+      expect(computeIcaclsGrants({ permissions: computePermissionsFromChmodOctalRepresentation('750') })).to.eql({
+        owner: 'M',
+        group: 'RX',
+        public: null,
+      });
+      expect(computeIcaclsGrants({ permissions: computePermissionsFromChmodOctalRepresentation('642') })).to.eql({
+        owner: '(R,W)',
+        group: '(R)',
+        public: '(W)',
       });
     });
   });

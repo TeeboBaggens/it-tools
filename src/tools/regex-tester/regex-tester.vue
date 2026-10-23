@@ -3,6 +3,7 @@ import RandExp from 'randexp';
 import { render } from '@regexper/render';
 import type { ShadowRootExpose } from 'vue-shadow-dom';
 import { matchRegex } from './regex-tester.service';
+import { buildRegexCommands, builderPalette, explainRegex } from './regex-tester.explain';
 import { useValidation } from '@/composable/validation';
 import { useQueryParamOrStorage } from '@/composable/queryParams';
 
@@ -83,6 +84,13 @@ watchEffect(async () => {
   }
 });
 
+const explanation = computed(() => explainRegex(regex.value));
+const commands = computed(() => buildRegexCommands({ pattern: regex.value, ignoreCase: ignoreCase.value }));
+
+function insertIntoRegex(snippet: string) {
+  regex.value = `${regex.value}${snippet}`;
+}
+
 tryOnBeforeUnmount(() => {
   const visualizer = visualizerSVG.value?.shadow_root;
   if (visualizer) {
@@ -105,6 +113,25 @@ tryOnBeforeUnmount(() => {
       <c-link target="_blank" to="/regex-memo" mb-1 mt-1>
         {{ t('tools.regex-tester.link') }}
       </c-link>
+      <n-collapse mb-2 mt-1>
+        <n-collapse-item :title="t('tools.regex-tester.texts.title-builder')" name="builder">
+          <div v-for="group in builderPalette" :key="group.title" mb-2>
+            <div class="palette-title">
+              {{ group.title }}
+            </div>
+            <n-space size="small">
+              <c-tooltip v-for="item in group.items" :key="item.label" :tooltip="item.explain">
+                <c-button size="small" @click="insertIntoRegex(item.insert)">
+                  <code>{{ item.label }}</code>
+                </c-button>
+              </c-tooltip>
+            </n-space>
+          </div>
+          <n-p op-70>
+            {{ t('tools.regex-tester.texts.tag-builder-help') }}
+          </n-p>
+        </n-collapse-item>
+      </n-collapse>
       <n-space>
         <n-checkbox v-model:checked="global">
           <span :title="t('tools.regex-tester.global')"
@@ -156,6 +183,19 @@ tryOnBeforeUnmount(() => {
       />
     </c-card>
 
+    <c-card v-if="explanation.length > 0" :title="t('tools.regex-tester.texts.title-explained')" mb-1 mt-3>
+      <n-table :bordered="false" size="small">
+        <tbody>
+          <tr v-for="(item, index) in explanation" :key="index">
+            <td class="token">
+              <code>{{ item.token }}</code>
+            </td>
+            <td>{{ item.explain }}</td>
+          </tr>
+        </tbody>
+      </n-table>
+    </c-card>
+
     <c-card :title="t('tools.regex-tester.matches')" mb-1 mt-3>
       <n-table v-if="results?.length > 0">
         <thead>
@@ -198,6 +238,14 @@ tryOnBeforeUnmount(() => {
       <c-alert v-else>
         {{ t('tools.regex-tester.no-match') }}
       </c-alert>
+    </c-card>
+
+    <c-card :title="t('tools.regex-tester.texts.title-commands')" mt-3>
+      <OsCommandTabs :linux="commands.linux" :macos="commands.macos" :windows="commands.windows" />
+      <n-p op-70>
+        {{ t('tools.regex-tester.texts.tag-replace-hint') }}
+        <c-link target="_blank" to="/sed-command-generator">sed command generator</c-link>.
+      </n-p>
     </c-card>
 
     <c-card :title="t('tools.regex-tester.sample')" mt-3>

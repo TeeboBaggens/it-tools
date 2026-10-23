@@ -3,7 +3,10 @@ import { useI18n } from 'vue-i18n';
 import * as ctz from 'countries-and-timezones';
 import getTimezoneOffset from 'get-timezone-offset';
 import posixTimezones from './posix-timezones.json';
+import { format as formatDate } from 'date-fns';
 import { useFlexSearch } from '@/composable/flexSearch';
+import type { OsCommand } from '@/components/OsCommandTabs.vue';
+import { quotePosix, quotePowerShell } from '@/utils/shell-quote';
 
 const { t } = useI18n();
 
@@ -30,13 +33,80 @@ const currentDatetimeRange = ref<[number, number]>([now, now]);
 const currentTimezoneOffset = computed(() => {
   return convertMinsToHrsMins(-getTimezoneOffset(currentTimezone.value, new Date(currentDatetimeRange.value[0])));
 });
-function convertToTimezone(tz: string, timestamp: number) {
-  return new Date(
+// The picker shows wall-clock time in the browser's zone; read it as wall-clock time in the
+// selected zone instead. Offsets are taken at the picked date, not today, or a date on the
+// other side of a DST change comes out an hour off.
+function toInstant(timestamp: number) {
+  const at = new Date(timestamp);
+  return (
     timestamp +
-      getTimezoneOffset(currentTimezone.value, new Date()) * 60 * 1000 -
-      getTimezoneOffset(browserTimezone, new Date()) * 60 * 1000,
-  ).toLocaleString(undefined, { timeZone: tz, timeZoneName: undefined, hour12: !use24HourTimeFormat.value });
+    getTimezoneOffset(currentTimezone.value, at) * 60 * 1000 -
+    getTimezoneOffset(browserTimezone, at) * 60 * 1000
+  );
 }
+function convertToTimezone(tz: string, timestamp: number) {
+  return new Date(toInstant(timestamp)).toLocaleString(undefined, {
+    timeZone: tz,
+    timeZoneName: undefined,
+    hour12: !use24HourTimeFormat.value,
+  });
+}
+
+// --- The same conversion on the command line ---------------------------------------------
+const epochSeconds = computed(() => Math.floor(toInstant(currentDatetimeRange.value[0]) / 1000));
+const wallTime = computed(() => formatDate(currentDatetimeRange.value[0], 'yyyy-MM-dd HH:mm'));
+const targetZones = computed(() => {
+  const zones = otherTimezones.value.map(({ name }) => name).filter(Boolean);
+  return zones.length > 0 ? zones : ['Etc/UTC'];
+});
+
+const linuxCommands = computed<OsCommand[]>(() => [
+  {
+    title: `${wallTime.value} in ${currentTimezone.value}, shown in each zone`,
+    code: targetZones.value
+      .map((tz) => `TZ=${quotePosix(tz)} date -d 'TZ="${currentTimezone.value}" ${wallTime.value}' '+%F %T %Z'`)
+      .join('\n'),
+    note: 'GNU date reads a TZ="…" prefix inside the date string as the zone that time is in; the TZ= before date is the zone to show it in.',
+  },
+  {
+    title: 'From a Unix timestamp',
+    code: `date -u -d @${epochSeconds.value}            # in UTC\nTZ=${quotePosix(targetZones.value[0])} date -d @${epochSeconds.value}`,
+    note: `${epochSeconds.value} = seconds since 1970-01-01 00:00 UTC, the same moment everywhere.`,
+  },
+  { title: 'Your own time zone', code: 'timedatectl\nsudo timedatectl set-timezone Europe/Paris   # change it' },
+]);
+
+const macCommands = computed<OsCommand[]>(() => [
+  {
+    title: `${wallTime.value} in ${currentTimezone.value} as a Unix timestamp`,
+    code: `TZ=${quotePosix(currentTimezone.value)} date -j -f '%Y-%m-%d %H:%M' '${wallTime.value}' +%s`,
+    note: 'BSD date: -j means do not set the clock, -f gives the input format.',
+  },
+  {
+    title: 'Shown in each zone',
+    code: targetZones.value.map((tz) => `TZ=${quotePosix(tz)} date -r ${epochSeconds.value} '+%F %T %Z'`).join('\n'),
+    note: 'macOS date uses -r <seconds> where Linux uses -d @<seconds>.',
+  },
+  { title: 'Your own time zone', code: 'sudo systemsetup -gettimezone\nsudo systemsetup -settimezone Europe/Paris' },
+]);
+
+const windowsCommands = computed<OsCommand[]>(() => [
+  {
+    title: 'Shown in each zone (PowerShell 7)',
+    code: [
+      `$utc = [DateTimeOffset]::FromUnixTimeSeconds(${epochSeconds.value})`,
+      ...targetZones.value.map(
+        (tz) => `[TimeZoneInfo]::ConvertTimeBySystemTimeZoneId($utc, ${quotePowerShell(tz, { always: true })})`,
+      ),
+    ].join('\n'),
+    note: 'PowerShell 7 on Windows 10 1903+ understands these IANA names. Windows PowerShell 5.1 needs Windows names instead, e.g. "Tokyo Standard Time": list them with Get-TimeZone -ListAvailable.',
+  },
+  {
+    title: `${wallTime.value} in ${currentTimezone.value} as a Unix timestamp (PowerShell 7)`,
+    code: `$tz = [TimeZoneInfo]::FindSystemTimeZoneById(${quotePowerShell(currentTimezone.value, { always: true })})\n$local = [DateTime]::ParseExact('${wallTime.value}', 'yyyy-MM-dd HH:mm', $null)\n[DateTimeOffset]::new($local, $tz.GetUtcOffset($local)).ToUnixTimeSeconds()`,
+  },
+  { title: 'Your own time zone', code: 'Get-TimeZone\nSet-TimeZone -Id "Romance Standard Time"   # change it (admin)' },
+]);
 
 const tzToCountriesInput = ref(browserTimezone);
 const tzToCountriesOutput = computed(() => ctz.getCountriesForTimezone(tzToCountriesInput.value));
@@ -123,6 +193,10 @@ const { searchResult: searchPosixResult } = useFlexSearch({
             </div>
           </template>
         </n-dynamic-input>
+      </c-card>
+
+      <c-card :title="t('tools.timezone-converter.texts.title-commands')" mt-2>
+        <OsCommandTabs :linux="linuxCommands" :macos="macCommands" :windows="windowsCommands" />
       </c-card>
     </c-card>
 

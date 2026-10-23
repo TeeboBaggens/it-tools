@@ -568,6 +568,7 @@ tools:
     title: Base64 string encoder/decoder
     description: Simply encode and decode strings into their base64 representation.
     texts:
+      title-commands: The same thing on the command line
       text-base64-string-copied-to-the-clipboard: Base64 string copied to the clipboard
       text-string-copied-to-the-clipboard: String copied to the clipboard
       message-invalid-base64-string: Invalid base64 string
@@ -3625,6 +3626,7 @@ tools:
     description: Convert Date-Time from a timezone to others and get timezone vs
       countries infos
     texts:
+      title-commands: The same conversion on the command line
       title-timezones-date-time-converter: Timezones Date-Time Converter
       label-timezone: Timezone
       label-date-time-interval-to-convert: "Date/time interval to convert:"
@@ -4154,7 +4156,7 @@ tools:
       label-xlsx: XLSX
   curl-generator:
     title: Curl Command Generator
-    description: Generate CURL command lines
+    description: Build a curl command (method, headers, body, auth, TLS, timeouts, proxy…) for Linux, macOS and Windows, with every option explained
     texts:
       message-invalid-json-string: Invalid JSON string
       label-url: "Url:"
@@ -4171,6 +4173,17 @@ tools:
       title-generated-curl-command: Generated curl command
       tag-json-body: JSON Body
       tag-multipart-form-data: Multipart Form-Data
+      title-request: Request
+      label-port: "Port:"
+      label-query: "Query parameters:"
+      title-body: Body
+      title-auth: Authentication
+      title-output: Output
+      title-redirects: Redirects
+      title-tls: TLS / HTTPS
+      title-connection: Connection
+      label-multiline: One option per line
+      title-explained: What each part means
   data-faker:
     title: Data Faker
     description: Generate fake data using JSON template
@@ -5492,6 +5505,13 @@ tools:
       tag-group-g: Group (g)
       tag-public-o: Public (o)
       tag-flags: Flags
+      title-how-to-read: How to read it
+      label-path: "Path:"
+      label-recursive: Recursive (-R)
+      label-umask-for-above: "Umask that gives new directories the permissions above:"
+      label-umask-input: "Or type a umask to see what it does:"
+      label-new-files: New files
+      label-new-directories: New directories
     service:
       text:
         invalid-octal-permissions-must-be-3-or-4-octal-digits-octalpermissions: "Invalid octal permissions (must be 3 or 4 octal digits): {0}"
@@ -5813,6 +5833,11 @@ tools:
     no-match: No match
     texts:
       message-invalid-regex-0: "Invalid regex: {0}"
+      title-builder: Build it from pieces
+      tag-builder-help: Click a piece to add it to the end of the regex; hover for what it does. Then edit it in the box above.
+      title-explained: What each part means
+      title-commands: Use it on the command line
+      tag-replace-hint: "To find and replace with it, see the"
       tag-global-search: Global search (
       tag-g: g
       tag-: )
@@ -6846,6 +6871,21 @@ tools:
   dockerfile-memo:
     title: Dockerfile cheatsheet
     description: Dockerfile syntax and build cheatsheet
+  secret-env-variable:
+    title: Secret Environment Variable
+    description: Set an environment variable from hidden input (no echo, not in shell history) in bash, zsh, fish, sh, PowerShell and cmd, or keep it in the OS keychain
+    texts:
+      tag-never-here: Type only the variable's name here. The commands below ask for the secret in your own terminal without showing it; never paste a secret into a web page.
+      label-name: "Variable name:"
+      message-invalid-name: Letters, digits and _ only, not starting with a digit
+      label-scope: "Keep it:"
+      label-scope-session: For this terminal session
+      label-scope-command: For one command only
+      label-scope-persist: Stored in the keychain, loaded on demand
+      label-command: "Command:"
+      title-commands: Commands
+      title-why: Why not just export NAME=secret?
+      title-explained: What each part means
   env-variables-converter:
     title: Env Variables Format Converter
     description: Convert between common env vars format and yaml
@@ -7303,6 +7343,12 @@ tools:
       label-target-file: Target File
       placeholder-e-g-file-txt: e.g., file.txt
       title-generated-sed-command: "Generated Sed command:"
+      label-backup-suffix: "Backup suffix:"
+      title-try-it: Try it on sample text
+      label-sample-input: Sample input
+      label-sample-output: Result
+      tag-preview-note: The preview runs in your browser with JavaScript regular expressions, which agree with sed on everything this generator produces apart from rare POSIX corner cases.
+      title-explained: What each part means
       tag-for-more-information-about: For more information about
       tag-sed: sed
       tag-command-see: command, see
@@ -9619,6 +9665,21 @@ tools:
       tag-import-table-data: Import Table Data
       tag-add-row: Add row
       tag-add-column: Add column
+  network-troubleshooting:
+    title: Network Troubleshooting Commands
+    description: Fill in a host and port, get the commands to check DNS (dig), reachability, open ports (nc), listening services (ss) and SSH (keys, tunnels) on Linux, macOS and Windows
+    texts:
+      message-invalid-host: "A host name or IP address (letters, digits, . - : _)"
+      label-host: "Host or IP:"
+      label-port: "Port:"
+      label-record-type: "DNS record type:"
+      label-dns-server: "DNS server to ask:"
+      label-ssh-user: "SSH user:"
+      label-ssh-port: "SSH port:"
+      label-local-port: "Local port (tunnels):"
+      label-jump-host: "Jump host:"
+      title-checklist: Where to start
+      tag-see-also: "See also:"
   nmap-command-builder:
     title: Nmap Command Builder
     description: A simple command builder for generating Nmap scan commands.

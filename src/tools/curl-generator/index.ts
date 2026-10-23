@@ -5,7 +5,7 @@ export const tool = defineTool({
   name: t('tools.curl-generator.title'),
   path: '/curl-generator',
   description: t('tools.curl-generator.description'),
-  keywords: ['curl'],
+  keywords: ['curl', 'http', 'request', 'api', 'rest', 'headers', 'tls', 'ssl', 'proxy', 'command'],
   component: () => import('./curl-generator.vue'),
   icon: defineAsyncComponent(() => import('@vicons/tabler/es/Download')),
   createdAt: new Date('2025-04-21'),

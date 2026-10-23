@@ -4,7 +4,10 @@ import type { GroupPermissions, Permissions, SpecialPermissions } from './chmod-
 import { translate as t } from '@/plugins/i18n.plugin';
 
 export {
+  applyUmask,
+  computeIcaclsGrants,
   computeUmaskRepresentation,
+  isValidUmask,
   computeChmodOctalRepresentation,
   computeChmodSymbolicRepresentation,
   computePermissionsFromChmodOctalRepresentation,
@@ -35,18 +38,18 @@ function computeChmodOctalRepresentation({ permissions }: { permissions: Permiss
 }
 
 function computeChmodSymbolicRepresentation({ permissions }: { permissions: Permissions }): string {
-  const permissionValue = { read: 'r', write: 'w', execute: 'x' };
-  const specialFlagPermission = 'execute';
-
-  const getGroupPermissionValue = (permission: GroupPermissions, specialFlag: null | 's' | 't') =>
-    _.reduce(
-      permission,
-      (acc, isPermSet, key) =>
-        acc +
-        ((key === specialFlagPermission ? specialFlag : undefined) ||
-          (isPermSet ? _.get(permissionValue, key, '') : '-')),
-      '',
-    );
+  // The special bits share the execute column: lowercase when execute is also set (s, t),
+  // uppercase when it isn't (S, T), which is how ls -l shows them.
+  const getGroupPermissionValue = (permission: GroupPermissions, specialFlag: null | 's' | 't') => {
+    const execute = specialFlag
+      ? permission.execute
+        ? specialFlag
+        : specialFlag.toUpperCase()
+      : permission.execute
+        ? 'x'
+        : '-';
+    return `${permission.read ? 'r' : '-'}${permission.write ? 'w' : '-'}${execute}`;
+  };
 
   return [
     getGroupPermissionValue(permissions.owner, permissions.flags?.setuid ? 's' : null),
@@ -86,7 +89,7 @@ function computePermissionsFromChmodOctalRepresentation(octalPermissions: string
 }
 
 function computePermissionsFromChmodSymbolicRepresentation(symbolicPermissions: string): Permissions {
-  const formatRegex = /^[-dlbcsp]?([r-])([w-])([xs-])([r-])([w-])([xs-])([r-])([w-])([xt-])$/;
+  const formatRegex = /^[-dlbcsp]?([r-])([w-])([xsS-])([r-])([w-])([xsS-])([r-])([w-])([xtT-])$/;
   if (!symbolicPermissions || !symbolicPermissions.match(formatRegex)) {
     throw new Error(
       t(
@@ -104,7 +107,10 @@ function computePermissionsFromChmodSymbolicRepresentation(symbolicPermissions: 
   const groups =
     getOctal(rGroup, 'r', 4) + getOctal(wGroup, 'w', 2) + getOctal(xGroup, 'x', 1) + getOctal(xGroup, 's', 1);
   const all = getOctal(rAll, 'r', 4) + getOctal(wAll, 'w', 2) + getOctal(xAll, 'x', 1) + getOctal(xAll, 't', 1);
-  const flags = getOctal(xOwner, 's', 4) + getOctal(xGroup, 's', 2) + getOctal(xAll, 't', 1);
+  const flags =
+    getOctal(xOwner.toLowerCase(), 's', 4) +
+    getOctal(xGroup.toLowerCase(), 's', 2) +
+    getOctal(xAll.toLowerCase(), 't', 1);
   const octalString = `${flags > 0 ? flags : ''}${owner}${groups}${all}`;
 
   return computePermissionsFromChmodOctalRepresentation(octalString);
@@ -139,5 +145,45 @@ function computeUmaskRepresentation({ permissions }: { permissions: Permissions 
   return {
     symbolic,
     octal,
+  };
+}
+
+function isValidUmask(umask: string): boolean {
+  return /^0?[0-7]{3}$/.test(umask.trim());
+}
+
+// New files start from 666 (rw for everyone) and new directories from 777; the umask lists
+// the bits to take away. Programs can ask for less (an SSH key is created 600 whatever the umask).
+function applyUmask(umask: string): { file: string; directory: string } {
+  const mask = Number.parseInt(umask.trim(), 8);
+  const toOctal = (mode: number) => mode.toString(8).padStart(3, '0');
+  return {
+    file: toOctal(0o666 & ~mask),
+    directory: toOctal(0o777 & ~mask),
+  };
+}
+
+// Windows has no mode bits: NTFS uses access control lists. The closest icacls rights for
+// each class. Write without delete on Windows is (W); rwx maps to Modify (M), which adds delete.
+function computeIcaclsGrants({ permissions }: { permissions: Permissions }): {
+  owner: string | null;
+  group: string | null;
+  public: string | null;
+} {
+  const toRights = (permission: GroupPermissions): string | null => {
+    const { read, write, execute } = permission;
+    if (read && write && execute) {
+      return 'M';
+    }
+    if (read && execute) {
+      return 'RX';
+    }
+    const rights = [read ? 'R' : '', write ? 'W' : '', execute ? 'X' : ''].filter(Boolean);
+    return rights.length > 0 ? `(${rights.join(',')})` : null;
+  };
+  return {
+    owner: toRights(permissions.owner),
+    group: toRights(permissions.group),
+    public: toRights(permissions.public),
   };
 }

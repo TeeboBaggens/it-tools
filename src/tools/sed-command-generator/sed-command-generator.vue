@@ -1,71 +1,57 @@
 <script setup lang="ts">
 import { useI18n } from 'vue-i18n';
+import {
+  type SedOptions,
+  buildPowerShellCommand,
+  buildSedCommand,
+  explainSed,
+  previewSed,
+} from './sed-command-generator.service';
+import type { OsCommand } from '@/components/OsCommandTabs.vue';
 
 const { t } = useI18n();
-const form = ref({
-  commandType: 'substitute', // substitute | delete | extract | number
+const form = ref<SedOptions>({
+  commandType: 'substitute',
   pattern: '',
   replacement: '',
   delimiter: '/',
   global: true,
   caseInsensitive: false,
   inPlace: false,
+  backupSuffix: '',
   extendedRegex: false,
-  suppressPrint: false,
   targetFile: '',
 });
+const sampleText = ref('foo bar foo\n# a comment\nFOO baz');
 
-const sedCommand = computed(() => {
-  const {
-    commandType,
-    pattern,
-    replacement,
-    delimiter,
-    global,
-    caseInsensitive,
-    inPlace,
-    extendedRegex,
-    suppressPrint,
-    targetFile,
-  } = form.value;
+const preview = computed(() => previewSed(form.value, sampleText.value));
+const explanation = computed(() => explainSed(form.value));
 
-  const options = [inPlace ? '-i' : '', extendedRegex ? '-E' : '', suppressPrint ? '-n' : ''].filter(Boolean).join(' ');
-
-  let expr = '';
-
-  if (commandType === 'substitute') {
-    if (!pattern || !replacement) {
-      return '';
-    }
-    const flags = `${global ? 'g' : ''}${caseInsensitive ? 'i' : ''}`;
-    expr = `s${delimiter}${pattern}${delimiter}${replacement}${delimiter}${flags}`;
-  } else if (commandType === 'delete') {
-    if (!pattern) {
-      return '';
-    }
-    expr = `/${pattern}/d`;
-  } else if (commandType === 'extract') {
-    if (!pattern) {
-      return '';
-    }
-    expr = `/${pattern}/p`;
-  } else if (commandType === 'number') {
-    expr = '=';
-  }
-
-  const file = targetFile || 'yourfile.txt';
-  return `sed ${options} '${expr}' ${file}`.trim();
-});
+const linuxCommands = computed<OsCommand[]>(() => [{ title: 'GNU sed', code: buildSedCommand(form.value, 'gnu') }]);
+const macCommands = computed<OsCommand[]>(() => [
+  {
+    title: 'BSD sed (built in)',
+    code: buildSedCommand(form.value, 'bsd'),
+    note: "macOS sed needs an argument after -i: '' for no backup. brew install gnu-sed gives you gsed, which behaves like Linux.",
+  },
+]);
+const windowsCommands = computed<OsCommand[]>(() => [
+  {
+    title: 'PowerShell',
+    code: buildPowerShellCommand(form.value),
+    note: 'Windows has no sed. -replace / -match use .NET regular expressions (groups are $1 and the whole match $0, not \\1 and &), and ignore case unless you write -creplace / -cmatch. With Set-Content, Windows PowerShell 5.1 writes the system code page: add -Encoding utf8 for UTF-8. In WSL or Git Bash, the Linux command works as is.',
+  },
+]);
 </script>
 
 <template>
   <div>
     <n-space justify="center" mb-1 mt-1>
       <n-p>
-        {{ t('tools.sed-command-generator.texts.tag-for-more-information-about')
-        }}<code>{{ t('tools.sed-command-generator.texts.tag-sed') }}</code
-        >{{ t('tools.sed-command-generator.texts.tag-command-see')
-        }}<c-link target="_blank" to="/sed-memo">
+        {{ t('tools.sed-command-generator.texts.tag-for-more-information-about') }}
+        <code>{{ t('tools.sed-command-generator.texts.tag-sed') }}</code>
+        {{ t('tools.sed-command-generator.texts.tag-command-see') }}
+        <c-link target="_blank" to="/sed-memo">
           {{ t('tools.sed-command-generator.texts.tag-sed-command-cheatsheet') }}
         </c-link>
       </n-p>
@@ -138,9 +124,10 @@ const sedCommand = computed(() => {
         <n-checkbox v-model:checked="form.extendedRegex">
           {{ t('tools.sed-command-generator.texts.tag-extended-regex-e') }}
         </n-checkbox>
-        <n-checkbox v-model:checked="form.suppressPrint">
-          {{ t('tools.sed-command-generator.texts.tag-suppress-automatic-printing-n') }}
-        </n-checkbox>
+      </n-form-item>
+
+      <n-form-item v-if="form.inPlace" :label="t('tools.sed-command-generator.texts.label-backup-suffix')">
+        <n-input v-model:value="form.backupSuffix" placeholder=".bak (empty: no backup)" />
       </n-form-item>
 
       <n-form-item :label="t('tools.sed-command-generator.texts.label-target-file')">
@@ -151,8 +138,55 @@ const sedCommand = computed(() => {
       </n-form-item>
 
       <c-card :title="t('tools.sed-command-generator.texts.title-generated-sed-command')" mt-3>
-        <textarea-copyable :value="sedCommand" />
+        <OsCommandTabs :linux="linuxCommands" :macos="macCommands" :windows="windowsCommands" />
+      </c-card>
+
+      <c-card :title="t('tools.sed-command-generator.texts.title-try-it')" mt-3>
+        <n-grid cols="1 m:2" x-gap="12" responsive="screen">
+          <n-gi>
+            <c-input-text
+              v-model:value="sampleText"
+              :label="t('tools.sed-command-generator.texts.label-sample-input')"
+              multiline
+              rows="6"
+              raw-text
+            />
+          </n-gi>
+          <n-gi>
+            <c-input-text
+              :value="preview.error || preview.output"
+              :label="t('tools.sed-command-generator.texts.label-sample-output')"
+              multiline
+              rows="6"
+              readonly
+              raw-text
+            />
+          </n-gi>
+        </n-grid>
+        <n-p op-70 mt-2>
+          {{ t('tools.sed-command-generator.texts.tag-preview-note') }}
+        </n-p>
+      </c-card>
+
+      <c-card :title="t('tools.sed-command-generator.texts.title-explained')" mt-3>
+        <n-table :bordered="false" size="small">
+          <tbody>
+            <tr v-for="(item, index) in explanation" :key="index">
+              <td class="part">
+                <code>{{ item.part }}</code>
+              </td>
+              <td>{{ item.explain }}</td>
+            </tr>
+          </tbody>
+        </n-table>
       </c-card>
     </n-form>
   </div>
 </template>
+
+<style lang="less" scoped>
+.part {
+  white-space: nowrap;
+  vertical-align: top;
+}
+</style>

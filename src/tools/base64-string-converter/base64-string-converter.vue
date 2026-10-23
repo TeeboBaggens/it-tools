@@ -4,6 +4,8 @@ import { useCopy } from '@/composable/copy';
 import { base64ToText, isValidBase64, textToBase64 } from '@/utils/base64';
 import { withDefaultOnError } from '@/utils/defaults';
 import { useITStorage, useQueryParam, useQueryParamOrStorage } from '@/composable/queryParams';
+import type { OsCommand } from '@/components/OsCommandTabs.vue';
+import { quotePosix, quotePowerShell } from '@/utils/shell-quote';
 
 const { t } = useI18n();
 
@@ -101,6 +103,73 @@ const encodings = [
   { label: 'MacCentralEurope', value: 'maccentraleurope' },
   { label: 'MacIceland', value: 'maciceland' },
 ];
+
+// --- The same thing on the command line ----------------------------------------------------
+// Short samples keep the commands readable; the commands work on any text.
+const sampleText = computed(() => (textInput.value || 'hello world').slice(0, 60));
+const sampleBase64 = computed(() => (base64Input.value.trim() || 'aGVsbG8gd29ybGQ=').slice(0, 80));
+const urlSafeEncode = computed(() => (encodeUrlSafe.value ? " | tr '+/' '-_' | tr -d '='" : ''));
+const urlSafeDecode = computed(() => (decodeUrlSafe.value ? "tr '_-' '/+' | " : ''));
+const encodingNote = computed(() =>
+  encoding.value === 'utf8' || encoding.value === 'utf-8'
+    ? undefined
+    : `These commands use the terminal's own encoding (normally UTF-8). For ${encoding.value}, convert first, e.g. iconv -f utf-8 -t ${encoding.value}.`,
+);
+
+const linuxCommands = computed<OsCommand[]>(() => [
+  {
+    title: 'Encode text',
+    code: `printf '%s' ${quotePosix(sampleText.value)} | base64 -w0${urlSafeEncode.value}`,
+    note: `printf, not echo: echo adds a newline that would be encoded too. -w0 keeps it on one line (GNU base64 wraps at 76 characters).${encodingNote.value ? ` ${encodingNote.value}` : ''}`,
+  },
+  {
+    title: 'Decode',
+    code: `printf '%s' ${quotePosix(sampleBase64.value)} | ${urlSafeDecode.value}base64 -d`,
+    note: decodeUrlSafe.value
+      ? 'URL-safe input: tr puts back + and / first. base64 -d may complain about missing = padding but still prints the result.'
+      : undefined,
+  },
+  {
+    title: 'Encode / decode a file',
+    code: 'base64 -w0 photo.png > photo.png.b64\nbase64 -d photo.png.b64 > photo-copy.png',
+  },
+]);
+
+const macCommands = computed<OsCommand[]>(() => [
+  {
+    title: 'Encode text',
+    code: `printf '%s' ${quotePosix(sampleText.value)} | base64${urlSafeEncode.value}`,
+    note: 'macOS base64 does not wrap lines, so it needs no -w0.',
+  },
+  {
+    title: 'Decode',
+    code: `printf '%s' ${quotePosix(sampleBase64.value)} | ${urlSafeDecode.value}base64 -d`,
+    note: 'Before macOS 13 the decode flag is -D.',
+  },
+  {
+    title: 'Encode / decode a file',
+    code: 'base64 -i photo.png -o photo.png.b64\nbase64 -d -i photo.png.b64 -o photo-copy.png',
+  },
+]);
+
+const windowsCommands = computed<OsCommand[]>(() => [
+  {
+    title: 'Encode text (PowerShell)',
+    code: `[Convert]::ToBase64String([Text.Encoding]::UTF8.GetBytes(${quotePowerShell(sampleText.value, { always: true })}))${encodeUrlSafe.value ? ".TrimEnd('=').Replace('+', '-').Replace('/', '_')" : ''}`,
+    note: 'Text has to become bytes first: UTF8 here. [Text.Encoding]::Unicode would give UTF-16, a different result.',
+  },
+  {
+    title: 'Decode (PowerShell)',
+    code: decodeUrlSafe.value
+      ? `$b = ${quotePowerShell(sampleBase64.value, { always: true })}.Replace('-', '+').Replace('_', '/')\n$b = $b.PadRight($b.Length + (4 - $b.Length % 4) % 4, '=')\n[Text.Encoding]::UTF8.GetString([Convert]::FromBase64String($b))`
+      : `[Text.Encoding]::UTF8.GetString([Convert]::FromBase64String(${quotePowerShell(sampleBase64.value, { always: true })}))`,
+  },
+  {
+    title: 'Encode / decode a file',
+    code: "[Convert]::ToBase64String([IO.File]::ReadAllBytes('photo.png')) | Set-Content photo.png.b64\n[IO.File]::WriteAllBytes('photo-copy.png', [Convert]::FromBase64String((Get-Content -Raw photo.png.b64)))",
+    note: 'cmd also has certutil -encode / -decode, which adds BEGIN/END CERTIFICATE lines around the data.',
+  },
+]);
 </script>
 
 <template>
@@ -187,5 +256,9 @@ const encodings = [
         {{ t('tools.base64-string-converter.texts.tag-copy-decoded-string') }}
       </c-button>
     </div>
+  </c-card>
+
+  <c-card :title="t('tools.base64-string-converter.texts.title-commands')">
+    <OsCommandTabs :linux="linuxCommands" :macos="macCommands" :windows="windowsCommands" />
   </c-card>
 </template>
