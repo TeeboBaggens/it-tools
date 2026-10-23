@@ -27,5 +27,5 @@ export const tool = defineTool({
   component: () => import('./network-troubleshooting.vue'),
   icon: defineAsyncComponent(() => import('@vicons/tabler/es/Stethoscope')),
   createdAt: new Date('2026-10-23'),
-  category: 'Network',
+  category: 'Shell / System',
 });

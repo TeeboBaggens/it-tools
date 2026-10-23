@@ -23,5 +23,5 @@ export const tool = defineTool({
   component: () => import('./secret-env-variable.vue'),
   icon: defineAsyncComponent(() => import('@vicons/tabler/es/Key')),
   createdAt: new Date('2026-10-23'),
-  category: 'Development',
+  category: 'Shell / System',
 });

@@ -20,5 +20,5 @@ export const tool = defineTool({
   ],
   component: () => import('./chmod-calculator.vue'),
   icon: defineAsyncComponent(() => import('@vicons/tabler/es/FileInvoice')),
-  category: 'Network',
+  category: 'Shell / System',
 });

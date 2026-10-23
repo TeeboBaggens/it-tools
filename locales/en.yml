@@ -5208,6 +5208,7 @@ tools:
     barcodes: Barcodes
     physics: Physics
     cheatsheets: Cheatsheets
+    shell / system: Shell / System
     forensic: Forensic
     finance: Finance
     default: Default
