@@ -37,8 +37,8 @@ monaco.editor.defineTheme('it-tools-dark', {
   inherit: true,
   rules: [],
   colors: {
-    'editor.background': '#232323',
-    'editorStickyScroll.background': '#232323',
+    'editor.background': '#26211d',
+    'editorStickyScroll.background': '#26211d',
   },
 });
 

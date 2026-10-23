@@ -20,8 +20,8 @@ export const { useTheme } = defineThemes({
   dark: {
     sizes,
 
-    backgroundColor: '#333333',
-    borderColor: '#333333',
+    backgroundColor: '#342d28',
+    borderColor: '#342d28',
     dropdownShadow: 'rgba(0, 0, 0, 0.2) 0px 8px 24px',
 
     option: {
@@ -34,7 +34,7 @@ export const { useTheme } = defineThemes({
     },
 
     focus: {
-      backgroundColor: '#1ea54c1a',
+      backgroundColor: '#c2a8941a',
     },
   },
   light: {

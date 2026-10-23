@@ -23,6 +23,7 @@ const colorPalette = useAppTheme();
 // Create CSS custom properties for the color palette
 const cssVars = computed(() => ({
   '--loading-background-color': colorPalette.value.loading_background,
+  '--primary-color': colorPalette.value.primary.color,
 }));
 
 // Apply CSS variables to the document root - batch updates to avoid thrashing
@@ -68,6 +69,8 @@ syncRef(locale, useStorage('locale', locale));
 
 <style>
 html {
+  /* Until App.vue sets the active theme's value */
+  --primary-color: #7e6555;
   height: 100%;
   margin: 0;
   padding: 0;

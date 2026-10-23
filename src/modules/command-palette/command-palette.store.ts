@@ -6,7 +6,6 @@ import { useStyleStore } from '@/stores/style.store';
 
 import SunIcon from '~icons/mdi/white-balance-sunny';
 import GithubIcon from '~icons/mdi/github';
-import BugIcon from '~icons/mdi/bug-outline';
 import DiceIcon from '~icons/mdi/dice-5';
 import InfoIcon from '~icons/mdi/information-outline';
 import { useFlexSearch } from '@/composable/flexSearch';
@@ -53,19 +52,11 @@ export const useCommandPaletteStore = (locale: string) =>
       },
       {
         name: t('tools.command-palette.store.texts.github-repository'),
-        href: 'https://github.com/sharevb/it-tools',
+        href: 'https://github.com/TeeboBaggens/it-tools',
         category: t('tools.command-palette.store.texts.external'),
         description: t('tools.command-palette.store.texts.view-the-source-code-of-it-tools-on-github'),
         keywords: ['github', 'repo', 'repository', 'source', 'code'],
         icon: GithubIcon,
-      },
-      {
-        name: t('tools.command-palette.store.texts.report-a-bug-or-an-issue'),
-        description: t('tools.command-palette.store.texts.report-a-bug-or-an-issue-to-help-improve-it-tools'),
-        href: 'https://github.com/sharevb/it-tools/issues/new/choose',
-        category: t('tools.command-palette.store.texts.actions-0'),
-        keywords: ['report', 'issue', 'bug', 'problem', 'error'],
-        icon: BugIcon,
       },
       {
         name: t('tools.pomodoro-timer.PomodoroApp.text.about'),

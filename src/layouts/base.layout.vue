@@ -1,5 +1,4 @@
 <script lang="ts" setup>
-import Coffee from '~icons/tabler/coffee';
 import Home2 from '~icons/tabler/home-2';
 import Menu2 from '~icons/tabler/menu-2';
 import { NIcon, useThemeVars } from 'naive-ui';
@@ -65,7 +64,7 @@ const tools = computed<ToolCategory[]>(() => [
           <div>
             IT-Tools
 
-            <c-link target="_blank" rel="noopener" :href="`https://github.com/sharevb/it-tools/tree/v${version}`">
+            <c-link target="_blank" rel="noopener" :href="`https://github.com/TeeboBaggens/it-tools`">
               v{{ version }}
             </c-link>
 
@@ -75,7 +74,7 @@ const tools = computed<ToolCategory[]>(() => [
                 target="_blank"
                 rel="noopener"
                 type="primary"
-                :href="`https://github.com/sharevb/it-tools/tree/${commitSha}`"
+                :href="`https://github.com/TeeboBaggens/it-tools/tree/${commitSha}`"
               >
                 {{ commitSha }}
               </c-link>
@@ -127,20 +126,6 @@ const tools = computed<ToolCategory[]>(() => [
         <div>
           <NavbarButtons v-if="!styleStore.isSmallScreen" />
         </div>
-
-        <c-tooltip position="bottom" :tooltip="$t('home.support')">
-          <c-button
-            round
-            href="https://www.buymeacoffee.com/sharevb"
-            rel="noopener"
-            target="_blank"
-            class="support-button"
-            :bordered="false"
-          >
-            <span v-if="!styleStore.isSmallScreen" mr-2>{{ $t('home.buyMeACoffee') }}</span>
-            <NIcon :component="Coffee" />
-          </c-button>
-        </c-tooltip>
       </div>
       <!-- Positioned wrapper so the route-change loading overlay (see router.ts)
            can cover just the page, leaving the nav bar and menu visible. -->
@@ -162,19 +147,6 @@ const tools = computed<ToolCategory[]>(() => [
 //     background-position: 0 0, @position @position;
 //     background-size: @size @size;
 // }
-
-.support-button {
-  background: rgb(37, 99, 108);
-  background: linear-gradient(48deg, rgba(37, 99, 108, 1) 0%, rgba(59, 149, 111, 1) 60%, rgba(20, 160, 88, 1) 100%);
-  color: #fff !important;
-  transition: padding ease 0.2s !important;
-
-  &:hover {
-    color: #fff;
-    padding-left: 30px;
-    padding-right: 30px;
-  }
-}
 
 .footer {
   text-align: center;

@@ -174,8 +174,8 @@ export default defineConfig({
         start_url: './?utm_source=pwa&utm_medium=pwa',
         scope: './',
         orientation: 'any',
-        theme_color: '#18a058',
-        background_color: '#f1f5f9',
+        theme_color: '#7e6555',
+        background_color: '#f4f0eb',
         icons: [
           {
             src: './favicon-16x16.png',

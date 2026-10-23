@@ -10153,42 +10153,6 @@ about:
     name: Naam
     desc: Beschrijving
     category: Categorie
-  content-fork: >-
-    # Over IT-Tools
-
-    Deze prachtige website, oorspronkelijk met ❤ gemaakt door [Corentin
-    Thomasset](https://corentin.tech?utm_source=it-tools&utm_medium=about) en
-    uitgebreid met ShareVB, verzamelt handige tools voor ontwikkelaars en mensen
-    die in de IT werken. Als je het nuttig vindt, deel het dan gerust met mensen
-    waarvan je denkt dat ze het ook nuttig zullen vinden en vergeet niet om het
-    te bookmarken in je snelkoppelingenbalk!
-
-    IT Tools is open-source (onder de GPL-3.0-licentie) en gratis, en dat zal
-    altijd zo blijven. Als je mijn werk aan deze fork wilt ondersteunen en me
-    wilt aanmoedigen om meer tools of functionaliteiten toe te voegen, overweeg
-    dan om me te steunen door [mij te
-    sponsoren](https://www.buymeacoffee.com/sharevb).
-
-    ## Technologieën
-
-    IT Tools is gemaakt in Vue.js (Vue 3) met de Naive UI-componentbibliotheek
-    en wordt gehost en continu geïmplementeerd door Vercel. In sommige tools
-    worden open-sourcebibliotheken van derden gebruikt. De volledige lijst vindt
-    u in het bestand
-    [package.json](https://github.com/sharevb/it-tools/blob/main/package.json)
-    van de repository.
-
-    ## Bug gevonden? Ontbreekt er een tool?
-
-    Als u een tool nodig heeft die momenteel niet hier aanwezig is en waarvan u
-    denkt dat deze nuttig kan zijn, kunt u een feature request indienen in de
-    [issues section](https://github.com/sharevb/it-tools/issues/new/choose) in
-    de GitHub-repository.
-
-    En als u een bug hebt gevonden of iets niet werkt zoals verwacht, kunt u een
-    bugrapport indienen in de [issues
-    section](https://github.com/sharevb/it-tools/issues/new/choose) in de
-    GitHub-repository.
   import-favorites: Favorieten importeren
   export-favorites: Favorieten exporteren
   put-your-favorites-json-array-here: Plaats hier uw favoriete JSON-array...

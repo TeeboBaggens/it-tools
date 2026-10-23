@@ -60,42 +60,6 @@ about:
   import-button: Импорт
   favorites-imported-successfully: Избранное успешно импортировано!
   error-importing-favorites-e: "Ошибка импорта избранного: {0}"
-  content-fork: >
-    # Об IT-Tools
-
-    Этот замечательный сайт, изначально созданный [Corentin
-    Thomasset](https://corentin.tech?utm_source=it-tools&utm_medium=about) и
-    расширенный ShareVB, объединяет полезные инструменты для разработчиков и
-    IT-специалистов. Если вы найдете его полезным, не стесняйтесь поделиться им
-    с теми, кому он тоже может быть полезен, и не забудьте добавить его в
-    закладки!
-
-    IT Tools — проект с открытым исходным кодом (по лицензии GPL-3.0),
-    бесплатный и всегда будет таким. Если вы хотите поддержать мою работу над
-    этим форком и побудить меня добавить больше инструментов или функций,
-    пожалуйста, рассмотрите возможность [поддержать
-    меня](https://www.buymeacoffee.com/sharevb).
-
-    ## Технологии
-
-    IT Tools написан на Vue.js (Vue 3) с использованием библиотеки компонентов
-    Naive UI и размещается и постоянно разворачивается компанией Vercel. В
-    некоторых инструментах используются сторонние библиотеки с открытым исходным
-    кодом. Полный список можно найти в файле
-    [package.json](https://github.com/sharevb/it-tools/blob/main/package.json)
-    репозитория.
-
-    ## Нашли ошибку? Инструмент отсутствует?
-
-    Если вам нужен инструмент, которого здесь нет, и вы считаете его полезным,
-    вы можете отправить запрос на добавление функции в раздел
-    [issues](https://github.com/sharevb/it-tools/issues/new/choose) репозитория
-    GitHub.
-
-    Если вы нашли ошибку или что-то работает не так, как ожидалось, пожалуйста,
-    отправьте отчёт об ошибке в раздел
-    [issues](https://github.com/sharevb/it-tools/issues/new/choose) репозитория
-    GitHub.
   text:
     collection-of-handy-online-tools-for-developers-with-great-ux-it-tools-is-a-free-and-open-source-collection-of-handy-online-tools-for-developers-and-people-working-in-it:
       Набор удобных онлайн-инструментов для разработчиков с отличным

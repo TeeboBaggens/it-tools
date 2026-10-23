@@ -23,7 +23,7 @@ const { icon, title } = toRefs(props);
 <style lang="less" scoped>
 .colored-card {
   background: rgb(37, 99, 108);
-  background: linear-gradient(48deg, rgba(37, 99, 108, 1) 0%, rgba(59, 149, 111, 1) 60%, rgba(20, 160, 88, 1) 100%);
+  background: linear-gradient(48deg, rgba(61, 51, 43, 1) 0%, rgba(107, 87, 71, 1) 60%, rgba(132, 112, 95, 1) 100%);
   color: #fff;
   border: none;
 

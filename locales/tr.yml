@@ -10150,42 +10150,6 @@ about:
     name: İsim
     desc: Tanım
     category: Kategori
-  content-fork: >
-    # IT-Tools Hakkında
-
-    Başlangıçta [Corentin
-    Thomasset](https://corentin.tech?utm_source=it-tools&utm_medium=about)
-    tarafından ❤ ile hazırlanan ve ShareVB tarafından genişletilen bu harika web
-    sitesi, geliştiriciler ve BT çalışanları için faydalı araçları bir araya
-    getiriyor. Faydalı bulursanız, lütfen faydalı olabileceğini düşündüğünüz
-    kişilerle paylaşmaktan çekinmeyin ve kısayol çubuğunuza eklemeyi unutmayın!
-
-    IT Tools açık kaynaklıdır (GPL-3.0 lisansı altında) ve ücretsizdir ve her
-    zaman öyle kalacaktır. Bu çataldaki çalışmalarımı desteklemek ve daha fazla
-    araç veya işlev eklemem için beni teşvik etmek isterseniz, lütfen [bana
-    sponsor olarak](https://www.buymeacoffee.com/sharevb) destek olmayı düşünün.
-
-    ## Teknolojiler
-
-    IT Tools, Naive UI bileşen kütüphanesi ile Vue.js (Vue 3) ile hazırlanmıştır
-    ve Vercel tarafından barındırılmakta ve sürekli olarak dağıtılmaktadır. Bazı
-    araçlarda üçüncü taraf açık kaynaklı kütüphaneler kullanılmaktadır; eksiksiz
-    listeyi deponun
-    [package.json](https://github.com/sharevb/it-tools/blob/main/package.json)
-    dosyasında bulabilirsiniz.
-
-    ## Bir hata mı buldunuz? Bir araç mı eksik?
-
-    Şu anda burada bulunmayan ve faydalı olabileceğini düşündüğünüz bir araca
-    ihtiyacınız varsa, GitHub deposundaki
-    [sorunlar](https://github.com/sharevb/it-tools/issues/new/choose) bölümünden
-    bir özellik isteği gönderebilirsiniz.
-
-
-    Bir hata bulursanız veya bir şey beklendiği gibi çalışmıyorsa, lütfen GitHub
-    deposundaki
-    [sorunlar](https://github.com/sharevb/it-tools/issues/new/choose) bölümüne
-    bir hata raporu gönderin.
   import-favorites: Favorileri İçe Aktar
   export-favorites: Favorileri Dışa Aktar
   put-your-favorites-json-array-here: Favori JSON dizinizi buraya koyun...

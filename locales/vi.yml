@@ -60,40 +60,6 @@ about:
   import-button: Nhập khẩu
   favorites-imported-successfully: Đã nhập mục ưa thích thành công!
   error-importing-favorites-e: "Lỗi khi nhập mục yêu thích: {0}"
-  content-fork: >
-    # Giới thiệu về IT-Tools
-
-    Trang web tuyệt vời này, ban đầu được tạo ra với ❤ bởi [Corentin
-    Thomasset](https://corentin.tech?utm_source=it-tools&utm_medium=about) và
-    được mở rộng bởi ShareVB, tổng hợp các công cụ hữu ích cho nhà phát triển và
-    những người làm việc trong lĩnh vực CNTT. Nếu bạn thấy hữu ích, hãy thoải
-    mái chia sẻ với những người mà bạn nghĩ cũng sẽ thấy hữu ích và đừng quên
-    đánh dấu trang này trên thanh lối tắt của bạn!
-
-    IT Tools là mã nguồn mở (theo giấy phép GPL-3.0) và miễn phí, và sẽ luôn như
-    vậy. Nếu bạn muốn hỗ trợ công việc của tôi trên nhánh này và khuyến khích
-    tôi bổ sung thêm các công cụ hoặc chức năng, vui lòng cân nhắc hỗ trợ bằng
-    cách [tài trợ cho tôi](https://www.buymeacoffee.com/sharevb).
-
-    ## Công nghệ
-
-    IT Tools được tạo bằng Vue.js (Vue 3) với thư viện thành phần Naive UI và
-    được Vercel lưu trữ và triển khai liên tục. Một số công cụ sử dụng thư viện
-    mã nguồn mở của bên thứ ba. Bạn có thể tìm thấy danh sách đầy đủ trong tệp
-    [package.json](https://github.com/sharevb/it-tools/blob/main/package.json)
-    của kho lưu trữ.
-
-    ## Đã tìm thấy lỗi? Thiếu công cụ?
-
-    Nếu bạn cần một công cụ hiện chưa có ở đây và bạn nghĩ rằng nó hữu ích, vui
-    lòng gửi yêu cầu tính năng trong phần
-    [issues](https://github.com/sharevb/it-tools/issues/new/choose) của kho lưu
-    trữ GitHub.
-
-    Và nếu bạn tìm thấy lỗi hoặc có điều gì đó không hoạt động như mong đợi, vui
-    lòng gửi báo cáo lỗi trong phần
-    [issues](https://github.com/sharevb/it-tools/issues/new/choose) của kho lưu
-    trữ GitHub.
   text:
     collection-of-handy-online-tools-for-developers-with-great-ux-it-tools-is-a-free-and-open-source-collection-of-handy-online-tools-for-developers-and-people-working-in-it:
       Bộ sưu tập các công cụ trực tuyến tiện dụng dành cho nhà phát triển, với

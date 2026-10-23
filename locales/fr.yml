@@ -61,40 +61,6 @@ about:
   import-button: Importer
   favorites-imported-successfully: Favoris importés avec succès !
   error-importing-favorites-e: "Erreur lors de l&#39;importation des favoris : {0}"
-  content-fork: >
-    # À propos d'IT-Tools
-
-    Ce superbe site web, initialement créé avec ❤ par [Corentin
-    Thomasset](https://corentin.tech?utm_source=it-tools&utm_medium=about) et
-    enrichi par ShareVB, regroupe des outils utiles aux développeurs et aux
-    professionnels de l'informatique. Si vous le trouvez utile, n'hésitez pas à
-    le partager et n'oubliez pas de l'ajouter à vos favoris !
-
-    IT Tools est open source (sous licence GPL-3.0) et gratuit, et le restera
-    toujours. Si vous souhaitez soutenir mon travail sur ce fork et m'encourager
-    à ajouter de nouveaux outils ou fonctionnalités, n'hésitez pas à me
-    [sponsoriser](https://www.buymeacoffee.com/sharevb).
-
-    ## Technologies
-
-    IT Tools est développé en Vue.js (Vue 3) avec la bibliothèque de composants
-    Naive UI et est hébergé et déployé en continu par Vercel. Des bibliothèques
-    open source tierces sont utilisées dans certains outils. Vous trouverez la
-    liste complète dans le fichier
-    [package.json](https://github.com/sharevb/it-tools/blob/main/package.json)
-    du dépôt.
-
-    ## Vous avez trouvé un bug ? Un outil est manquant ?
-
-    Si vous avez besoin d'un outil actuellement absent et que vous pensez utile,
-    n'hésitez pas à soumettre une demande de fonctionnalité dans la section
-    [problèmes](https://github.com/sharevb/it-tools/issues/new/choose) du dépôt
-    GitHub.
-
-    Si vous avez trouvé un bug ou si quelque chose ne fonctionne pas comme
-    prévu, veuillez signaler un bug dans la section
-    [problèmes](https://github.com/sharevb/it-tools/issues/new/choose) du dépôt
-    GitHub.
   text:
     collection-of-handy-online-tools-for-developers-with-great-ux-it-tools-is-a-free-and-open-source-collection-of-handy-online-tools-for-developers-and-people-working-in-it:
       IT Tools est une collection d'outils en ligne pratiques pour développeurs,
